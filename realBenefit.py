@@ -3,16 +3,48 @@ from selenium.webdriver.common.by import By
 from datetime import datetime
 from time import sleep
 import csv
+from tkinter import messagebox
+import pandas as pd
 
-print(40*"-")
-print(10*" " + "Shopify İşlem Menüsü" + 10*" ")
-print(40*"-")
+def print_hugy():
+    letters = {
+        'H': ['*   *', '*   *', '*****', '*   *', '*   *'],
+        'U': ['*   *', '*   *', '*   *', '*   *', '*****'],
+        'G': ['*****', '*    ', '*    ', '* ***', '*****'],
+        'Y': ['*   *', '*   *', ' *** ', '  *  ', '  *  ']
+    }
+    
+    for i in range(5):
+        for letter in 'HUGY':
+            print(letters[letter][i], end='  ')
+        print()
 
-print("1-) İstenilen Kara Göre Ürün Fiyatının Belirlenmesi\n2-) Reklam Performansına Göre Kar Miktarı")
+def toplamKariHesapla():
+    global toplamKar
+    df = pd.read_csv("KAR_KAYIT.csv")
+    toplamKar = df["Günlük TL Karı"].sum()
+    gecenGun = len(df.index)
+    print(f"Bugüne kadar geçen {gecenGun} günlük süre zarfında yapılan toplam Türk Lirası karınız: {toplamKar:.2f} ₺")
+    return toplamKar
+
+def toplamReklamMaliyetiHesapla():
+    global toplamReklam
+    df = pd.read_csv("KAR_KAYIT.csv")
+    toplamReklam = df["Reklam Maliyeti"].sum()
+    gecenGun = len(df.index)
+    print(f"Bugüne kadar geçen {gecenGun} günlük süre zarfında yapılan toplam reklam harcamanız: {toplamReklam:.2f} ₺\nGünlük ortalama {toplamReklam/gecenGun} ₺ reklam harcamanız var.")
+
+print_hugy()
+print(26*"-")
+print(3*" " + "Shopify İşlem Menüsü" + 3*" ")
+print(26*"-")
+
+print("1-) İstenilen Kara Göre Ürün Fiyatının Belirlenmesi\n2-) Reklam Performansına Göre Kar Miktarı\n3-) Günümüze Kadar Geçen Sürede Yapılmış Kar Miktarı\n4-) Günümüze Kadar Geçen Sürede Yapılan Reklam Harcaması Miktarı")
 sleep(0.5)
-islem = input("İşlem Gir: ")
 
 while True:
+    islem = input("İşlem Gir: ")
+
     if islem == "q":
         break
     elif islem == "1":
@@ -82,11 +114,28 @@ while True:
             odeme2 = csv.writer(kar)
             odeme2.writerows(veriler)
 
-        print("\nVeriler başarıyla kaydedildi.\nİşlem sonlandırılıyor...")
-        sleep(2)
-        print("İşlem sonlandırıldı.")
+        tlKar = tl*urunSatisAdedi
+        if tlKar > 3000:
+            metin = f"Bravo Dostum! {datetime.now().date()} tarihindeki karın 3000 Türk Lirası'nın üstünde.\nBöyle devamm!"
+            messagebox.showinfo("Güzel Kar", metin)
+
+        messagebox.showinfo("Başarılı İşlem", "Veriler başarıyla '.csv' dosyasına kaydedildi.")
         break
     
-    else:
-        print("Yanlış işlem numarasını girdiniz. Lütfen menüdeki numaralara uyunuz!")
+    elif islem == "3":
+        toplamKariHesapla()
+        metin = f"Toplam kar başarıyla hesaplandı bugüne kadar geçen sürede yapmış olduğunuz TL karınız {toplamKar:.2f} ₺"
+        messagebox.showinfo("Toplam Kar", metin)
+        break 
+
+    elif islem == "4":
+        toplamReklamMaliyetiHesapla()
+        metin = f"Toplam reklam maliyeti hesaplandı. Bugüne kadar geçen sürede yapmış olduğunuz reklam harcamanız {toplamReklam:.2f} ₺"
+        messagebox.showinfo("Toplam Reklam Harcaması", metin)
         break
+
+    elif islem == "q":
+        break
+
+    else:
+        print("Yanlış işlem numarasını girdiniz.\nLütfen menüdeki numaralara uyunuz ve yeniden bir numara girmeyi deneyiniz.\nSistemden çıkmak istiyorsanız q'ya basınız.")
