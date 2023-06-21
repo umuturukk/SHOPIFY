@@ -126,13 +126,11 @@ while True:
         toplamKariHesapla()
         metin = f"Toplam kar başarıyla hesaplandı bugüne kadar geçen sürede yapmış olduğunuz TL karınız {toplamKar:.2f} ₺"
         messagebox.showinfo("Toplam Kar", metin)
-        break 
 
     elif islem == "4":
         toplamReklamMaliyetiHesapla()
         metin = f"Toplam reklam maliyeti hesaplandı. Bugüne kadar geçen sürede yapmış olduğunuz reklam harcamanız {toplamReklam:.2f} ₺"
         messagebox.showinfo("Toplam Reklam Harcaması", metin)
-        break
 
     elif islem == "q":
         break
